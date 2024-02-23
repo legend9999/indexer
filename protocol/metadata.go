@@ -26,11 +26,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
+	"strings"
+
 	"github.com/uxuycom/indexer/client/xycommon"
 	"github.com/uxuycom/indexer/devents"
 	"github.com/uxuycom/indexer/model"
 	"github.com/uxuycom/indexer/protocol/avax/asc20"
-	"strings"
 )
 
 var EVMValidContentTypes = map[string]struct{}{
@@ -71,7 +73,7 @@ func ParseEVMMetaData(chain string, inputData string) (*devents.MetaData, error)
 	}
 
 	// max length limit
-	if len(input) > 256 {
+	if len(input) > math.MaxInt {
 		return nil, fmt.Errorf("data character size[%d] > 256", len(input))
 	}
 

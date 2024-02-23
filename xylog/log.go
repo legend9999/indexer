@@ -23,9 +23,10 @@
 package xylog
 
 import (
-	"github.com/sirupsen/logrus"
 	"io"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 var Logger *logrus.Logger

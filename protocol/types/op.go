@@ -37,4 +37,5 @@ const (
 	ASC20Protocol = "asc-20"
 	BSC20Protocol = "bsc-20"
 	PRC20Protocol = "prc-20"
+	OpBrcProtocol = "opbrc"
 )

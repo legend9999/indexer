@@ -25,7 +25,15 @@ package main
 import (
 	"context"
 	"flag"
+	"net/http"
+	_ "net/http/pprof"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
+
 	"github.com/sirupsen/logrus"
+
 	"github.com/uxuycom/indexer/client"
 	"github.com/uxuycom/indexer/devents"
 	"github.com/uxuycom/indexer/protocol"
@@ -35,12 +43,6 @@ import (
 	"github.com/uxuycom/indexer/dcache"
 	"github.com/uxuycom/indexer/explorer"
 	"github.com/uxuycom/indexer/storage"
-	"net/http"
-	_ "net/http/pprof"
-	"os"
-	"os/signal"
-	"runtime"
-	"syscall"
 )
 
 var (
@@ -86,6 +88,7 @@ func main() {
 	}
 
 	dCache := dcache.NewManager(dbClient, cfg.Chain.ChainName)
+	dCache.GlobalCfg = &cfg
 
 	// init protocols
 	protocol.InitProtocols(dCache)

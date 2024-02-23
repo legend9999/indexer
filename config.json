@@ -1,20 +1,28 @@
 {
   "scan": {
-    "start_block": 39205395,
+    "start_block": 21535178,
     "block_batch_workers": 1,
     "tx_batch_workers": 1,
     "delayed_block_num": 10
   },
   "database": {
     "type": "mysql",
-    "dsn": "root:1234qwer@tcp(127.0.0.1:3306)/tap_indexer?charset=utf8mb4&parseTime=True&loc=Local&collation=utf8mb4_general_ci",
+    "dsn": "root:Fynlizhiwei1234!@tcp(39.99.239.87:3306)/tap_indexer?charset=utf8mb4&parseTime=True&loc=Local&collation=utf8mb4_general_ci",
     "enable_log": false
   },
   "chain": {
-    "chain_name": "avalanche",
-    "rpc": "https://1rpc.io/avax/c",
+    "chain_name": "opbnb",
+    "rpc": "https://opbnb-testnet.nodereal.io/v1/3059a6819fe2400993665ddf1dee2d94",
     "username": "",
-    "password": ""
+    "password": "",
+    "treasury_address": "0x63eefb268bd21c57b5eeba1cbc909695bfa66f4e",
+    "market_place_address": "0x59C0f1B3D420BA4f3Ffc53C84722D6F9f50272C6",
+    "register_fee":{
+        "2":"0.02",
+        "3":"0.01",
+        "4":"0.0001",
+        "5":"0.00001"
+    }
   },
   "log_level": "info",
   "notls": true,
@@ -29,9 +37,7 @@
       "0x8cdf9e10a7b20e7a9c4e778fc3eb28f2766e438a9856a62eac39fbd2be98cbc2"
     ],
     "whitelist": {
-      "ticks": [
-        "cczzc"
-      ]
+      "ticks": []
     }
   },
   "profile": {

@@ -25,17 +25,19 @@ package explorer
 import (
 	"errors"
 	"fmt"
+	"math/big"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/alitto/pond"
+
 	"github.com/uxuycom/indexer/client/xycommon"
 	"github.com/uxuycom/indexer/devents"
 	"github.com/uxuycom/indexer/protocol"
 	"github.com/uxuycom/indexer/protocol/common"
 	"github.com/uxuycom/indexer/xyerrors"
 	"github.com/uxuycom/indexer/xylog"
-	"math/big"
-	"strings"
-	"sync"
-	"time"
 )
 
 func (e *Explorer) validReceiptTxs(items []*xycommon.RpcTransaction) ([]*xycommon.RpcTransaction, *xyerrors.InsError) {
@@ -197,6 +199,19 @@ func (e *Explorer) handleTxs(block *xycommon.RpcBlock, txs []*xycommon.RpcTransa
 			blockTxResults = append(blockTxResults, e.txResultHandler.BuildModel(txResult))
 		}
 	}
+
+	// 处理结算
+	if e.config.Chain.ChainName == "opbnb" {
+		txResults, insError := protocol.EvmOpbrcProtocol.Settle(block)
+		if insError != nil {
+			xylog.Logger.Warnf("settle block[%d] error:%v", block.Number.Uint64(), insError)
+		}
+		for _, txResult := range txResults {
+			e.txResultHandler.UpdateCache(txResult)
+			blockTxResults = append(blockTxResults, e.txResultHandler.BuildModel(txResult))
+		}
+	}
+
 	e.writeDBAsync(block, blockTxResults)
 	return nil
 }

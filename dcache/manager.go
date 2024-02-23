@@ -23,9 +23,11 @@
 package dcache
 
 import (
+	"time"
+
+	"github.com/uxuycom/indexer/config"
 	"github.com/uxuycom/indexer/storage"
 	"github.com/uxuycom/indexer/xylog"
-	"time"
 )
 
 // Manager
@@ -39,6 +41,7 @@ type Manager struct {
 	UTXO             *UTXO
 	Inscription      *Inscription
 	InscriptionStats *InscriptionStats
+	GlobalCfg        *config.Config
 }
 
 func NewManager(db *storage.DBClient, chain string) *Manager {
@@ -56,6 +59,10 @@ func NewManager(db *storage.DBClient, chain string) *Manager {
 	e.initBalanceCache(chain)
 	e.initUtxoCache()
 	return e
+}
+
+func (h *Manager) GetDBClient() *storage.DBClient {
+	return h.db
 }
 
 func (h *Manager) initInscriptionCache(chain string) {

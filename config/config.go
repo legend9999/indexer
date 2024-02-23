@@ -24,10 +24,13 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/uxuycom/indexer/model"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/shopspring/decimal"
+
+	"github.com/uxuycom/indexer/model"
 )
 
 type ScanConfig struct {
@@ -38,11 +41,14 @@ type ScanConfig struct {
 }
 
 type ChainConfig struct {
-	ChainName  string           `json:"chain_name"`
-	Rpc        string           `json:"rpc"`
-	UserName   string           `json:"username"`
-	PassWord   string           `json:"password"`
-	ChainGroup model.ChainGroup `json:"chain_group"`
+	ChainName          string                  `json:"chain_name"`
+	Rpc                string                  `json:"rpc"`
+	UserName           string                  `json:"username"`
+	PassWord           string                  `json:"password"`
+	ChainGroup         model.ChainGroup        `json:"chain_group"`
+	TreasuryAddress    string                  `json:"treasury_address"`
+	MarketPlaceAddress string                  `json:"market_place_address"`
+	RegisterFee        map[int]decimal.Decimal `json:"register_fee"`
 }
 
 type IndexFilter struct {

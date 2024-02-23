@@ -31,6 +31,7 @@ import (
 	"github.com/uxuycom/indexer/protocol/avax/asc20"
 	btcBrc20 "github.com/uxuycom/indexer/protocol/btc/brc20"
 	"github.com/uxuycom/indexer/protocol/evm/brc20"
+	"github.com/uxuycom/indexer/protocol/evm/opbrc"
 	"github.com/uxuycom/indexer/protocol/types"
 	"github.com/uxuycom/indexer/storage"
 	"github.com/uxuycom/indexer/xylog"
@@ -40,12 +41,14 @@ var (
 	BTCBrc20Protocol *btcBrc20.Protocol
 	EvmAsc20Protocol *asc20.Protocol
 	EvmBrc20Protocol *brc20.Protocol
+	EvmOpbrcProtocol *opbrc.Protocol
 )
 
 func InitProtocols(cache *dcache.Manager) {
 	BTCBrc20Protocol = btcBrc20.NewProtocol(cache)
 	EvmBrc20Protocol = brc20.NewProtocol(cache)
 	EvmAsc20Protocol = asc20.NewProtocol(cache)
+	EvmOpbrcProtocol = opbrc.NewProtocol(cache)
 }
 
 func GetProtocol(cfg *config.Config, tx *xycommon.RpcTransaction) (types.IProtocol, *devents.MetaData) {
@@ -68,6 +71,8 @@ func GetProtocol(cfg *config.Config, tx *xycommon.RpcTransaction) (types.IProtoc
 	switch md.Protocol {
 	case types.ASC20Protocol:
 		return EvmAsc20Protocol, md
+	case types.OpBrcProtocol:
+		return EvmOpbrcProtocol, md
 	default:
 		return EvmBrc20Protocol, md
 	}
