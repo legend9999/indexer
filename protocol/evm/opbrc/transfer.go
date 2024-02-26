@@ -26,6 +26,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"strings"
 
 	"github.com/shopspring/decimal"
 
@@ -72,7 +73,7 @@ func (p *Protocol) ProcessTransfer(block *xycommon.RpcBlock, tx *xycommon.RpcTra
 }
 
 func (p *Protocol) checkTransfer(tx *xycommon.RpcTransaction, md *devents.MetaData) (*devents.Transfer, *xyerrors.InsError) {
-	if tx.To != p.cache.GlobalCfg.Chain.TreasuryAddress {
+	if strings.ToLower(tx.To) != strings.ToLower(p.cache.GlobalCfg.Chain.TreasuryAddress) {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("tx.to[%s] != treasury_address[%s]", tx.To, p.cache.GlobalCfg.Chain.TreasuryAddress))
 	}
 	tf := &Transfer{}

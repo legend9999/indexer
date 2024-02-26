@@ -49,7 +49,7 @@ func (p *Protocol) ProcessRegister(block *xycommon.RpcBlock, tx *xycommon.RpcTra
 }
 
 func (p *Protocol) checkRegister(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, md *devents.MetaData) (*Register, *xyerrors.InsError) {
-	if tx.To != p.cache.GlobalCfg.Chain.TreasuryAddress {
+	if strings.ToLower(tx.To) != strings.ToLower(p.cache.GlobalCfg.Chain.TreasuryAddress) {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("tx.to[%s] != treasury_address[%s]", tx.To, p.cache.GlobalCfg.Chain.TreasuryAddress))
 	}
 	// metadata protocol / tick checking

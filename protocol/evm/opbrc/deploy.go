@@ -69,7 +69,7 @@ func (p *Protocol) ProcessDeploy(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 }
 
 func (p *Protocol) checkDeploy(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, md *devents.MetaData) (*Deploy, *xyerrors.InsError) {
-	if tx.To != p.cache.GlobalCfg.Chain.TreasuryAddress {
+	if strings.ToLower(tx.To) != strings.ToLower(p.cache.GlobalCfg.Chain.TreasuryAddress) {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("tx.to[%s] != treasury_address[%s]", tx.To, p.cache.GlobalCfg.Chain.TreasuryAddress))
 	}
 	// metadata protocol / tick checking
