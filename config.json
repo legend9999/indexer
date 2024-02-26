@@ -7,7 +7,7 @@
   },
   "database": {
     "type": "mysql",
-    "dsn": "root:Fynlizhiwei1234!@tcp(39.99.239.87:3306)/tap_indexer?charset=utf8mb4&parseTime=True&loc=Local&collation=utf8mb4_general_ci",
+    "dsn": "yyyy:xxxx@tcp(xxx.xxx.xxx.xxx:3306)/tap_indexer?charset=utf8mb4&parseTime=True&loc=Local&collation=utf8mb4_general_ci",
     "enable_log": false
   },
   "chain": {
