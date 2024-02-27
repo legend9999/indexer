@@ -93,3 +93,24 @@ type OpbrcMarketPlaceTx struct {
 func (OpbrcMarketPlaceTx) TableName() string {
 	return "opbrc_market_place_tx"
 }
+
+type OpbrcTempTxs struct {
+	ID           uint64    `gorm:"primaryKey" json:"id"`
+	Chain        string    `json:"chain" gorm:"column:chain"`                 // chain name
+	Protocol     string    `json:"protocol" gorm:"column:protocol"`           // protocol name
+	BlockHeight  uint64    `json:"block_height" gorm:"column:block_height"`   // block height
+	FromAddress  string    `json:"from_address" gorm:"column:from_address"`   // from address
+	TxHash       string    `json:"tx_hash" gorm:"column:tx_hash"`             // tx hash
+	Op           string    `json:"op" gorm:"column:op"`                       // op code
+	Tick         string    `json:"tick" gorm:"column:tick"`                   // inscription code
+	BlockContent string    `json:"block_content" gorm:"column:block_content"` // inscription code
+	TxContent    string    `json:"tx_content" gorm:"column:tx_content"`       // inscription code
+	OpContent    string    `json:"op_content" gorm:"column:op_content"`       // inscription code
+	MdContent    string    `json:"md_content" gorm:"column:md_content"`       // inscription code
+	CreatedAt    time.Time `json:"created_at" gorm:"column:created_at"`
+	UpdatedAt    time.Time `json:"updated_at" gorm:"column:updated_at"`
+}
+
+func (OpbrcTempTxs) TableName() string {
+	return "opbrc_temp_txs"
+}

@@ -23,9 +23,11 @@
 package opbrc
 
 import (
+	"encoding/json"
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/uxuycom/indexer/client/xycommon"
 	"github.com/uxuycom/indexer/dcache"
@@ -105,6 +107,9 @@ func NewProtocol(cache *dcache.Manager) *Protocol {
 		t := subMap.(*sync.Map)
 		t.Store(strings.ToLower(v.Address), v.MintTimes)
 	}
+
+	result.initTempTx()
+
 	return result
 }
 
@@ -160,4 +165,63 @@ func (p *Protocol) GetInscriptionExt(tickName string) *model.OpbrcInscriptionExt
 func isValidEthAddress(address string) bool {
 	ethAddressRegex := regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 	return ethAddressRegex.MatchString(address)
+}
+
+func (p *Protocol) initTempTx() {
+	start := time.Now()
+	notSettledTick := p.notSettledTick()
+	for _, ext := range notSettledTick {
+		toBlockNumber := ext.SettledBlockNumber + ext.Sm*60
+		tick := strings.ToLower(ext.Tick)
+		opbrcTempTxs, err := p.loadTempTx(tick, ext.SettledBlockNumber+1, toBlockNumber)
+		if err != nil {
+			xylog.Logger.Warnf("load [%s] temp tx err %s", ext.Tick, err)
+			continue
+		}
+		for _, tempTx := range opbrcTempTxs {
+			//把mint事件暂存
+			tickMintTxsObj, ok := p.allAddressCurrentSmMintTxMap.Load(tick)
+			if !ok {
+				tickMintTxsObj = make([]*tempSettleMint, 0)
+				p.allAddressCurrentSmMintTxMap.Store(tick, tickMintTxsObj)
+			}
+			var (
+				block *xycommon.RpcBlock
+				tx    *xycommon.RpcTransaction
+				mint  *Mint
+				md    *devents.MetaData
+			)
+
+			err := json.Unmarshal([]byte(tempTx.BlockContent), &block)
+			if err != nil {
+				xylog.Logger.Warnf("unmarshal block err %s", err)
+				continue
+			}
+			err = json.Unmarshal([]byte(tempTx.TxContent), &tx)
+			if err != nil {
+				xylog.Logger.Warnf("unmarshal tx err %s", err)
+				continue
+			}
+			err = json.Unmarshal([]byte(tempTx.OpContent), &mint)
+			if err != nil {
+				xylog.Logger.Warnf("unmarshal mint err %s", err)
+				continue
+			}
+			err = json.Unmarshal([]byte(tempTx.MdContent), &md)
+			if err != nil {
+				xylog.Logger.Warnf("unmarshal md err %s", err)
+				continue
+			}
+			tickMintTxs := tickMintTxsObj.([]*tempSettleMint)
+			temp := &tempSettleMint{
+				Block: block,
+				Tx:    tx,
+				Mint:  mint,
+				Md:    md,
+			}
+			tickMintTxs = append(tickMintTxs, temp)
+			p.allAddressCurrentSmMintTxMap.Store(mint.Tick, tickMintTxs)
+		}
+	}
+	xylog.Logger.Infof("init temp tx use time %v", time.Since(start))
 }

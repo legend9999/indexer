@@ -38,10 +38,10 @@ import (
 )
 
 type tempSettleMint struct {
-	block *xycommon.RpcBlock
-	tx    *xycommon.RpcTransaction
-	mint  *Mint
-	md    *devents.MetaData
+	Block *xycommon.RpcBlock
+	Tx    *xycommon.RpcTransaction
+	Mint  *Mint
+	Md    *devents.MetaData
 }
 
 func (p *Protocol) Settle(block *xycommon.RpcBlock) ([]*devents.TxResult, *xyerrors.InsError) {
@@ -67,7 +67,7 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 	}
 
 	totalSupply := ins.TotalSupply                  // 总发行量
-	mspan := insExt.Mspan                           // mint 总时间
+	mspan := insExt.Mspan                           // Mint 总时间
 	cost := insExt.Cost                             // 付费mint的bnb量，wei
 	mcount := insExt.Mcount                         // 单地址mint总次数
 	endBlockNumber := insExt.EndBlockNumber         // 结束区块
@@ -79,12 +79,12 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 	// 判断是否到结算的时间点
 	if settledBlockNumber >= endBlockNumber {
 		xylog.Logger.Warnf("settle tick %s endBlockNumber = %d parsedMaxBlockNumber = %d", tickName, endBlockNumber, block.Number.Uint64())
-		return nil, nil
+		return nil, xyerrors.NewInsError(-102, fmt.Sprintf("tick %s endBlockNumber = %d parsedMaxBlockNumber = %d", tickName, endBlockNumber, block.Number.Uint64()))
 	}
 	toBlockNumber := settledBlockNumber + sm*60
 	if toBlockNumber > block.Number.Uint64() {
 		xylog.Logger.Debugf("settle tick %s toBlockNumber = %d parsedMaxBlockNumber = %d", tickName, toBlockNumber, block.Number.Uint64())
-		return nil, nil
+		return nil, xyerrors.NewInsError(-103, fmt.Sprintf("tick %s toBlockNumber = %d parsedMaxBlockNumber = %d", tickName, toBlockNumber, block.Number.Uint64()))
 	}
 	xylog.Logger.Infof(" settle tick %s totalSupply = %s mspan = %d cost = %d mcount = %d endBlockNumber = %d settledBlockNumber = %d avgSettleQty = %d progress = %d sm = %d",
 		tickName, totalSupply, mspan, cost, mcount, endBlockNumber, settledBlockNumber, avgSettleQty, progress, sm)
@@ -105,7 +105,7 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 	//本次结算有效果mint总次数
 	validTimes := 0
 	for _, tickMintTx := range tickMintTxs {
-		minter := strings.ToLower(tickMintTx.tx.From)
+		minter := strings.ToLower(tickMintTx.Tx.From)
 		mintedTimes := p.getMintTimes(tickName, minter)
 		if mintedTimes == 0 {
 			newAddrMint[minter] = struct{}{}
@@ -153,11 +153,11 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 
 		for _, settleMint := range validTickMintTx {
 			mintAmtResult = append(mintAmtResult, &devents.TxResult{
-				MD:    settleMint.md,
-				Block: settleMint.block,
-				Tx:    settleMint.tx,
+				MD:    settleMint.Md,
+				Block: settleMint.Block,
+				Tx:    settleMint.Tx,
 				Mint: &devents.Mint{
-					Minter: settleMint.tx.From,
+					Minter: settleMint.Tx.From,
 					Amount: decimal.NewFromInt(int64(singleMintQty)),
 				},
 				Deploy:   nil,
@@ -245,6 +245,10 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 
 	//删除本次结算完的数据
 	p.allAddressCurrentSmMintTxMap.Delete(tickName)
+	_, err = p.deleteTempTx(tickName, settledBlockNumber+1, toBlockNumber)
+	if err != nil {
+		xylog.Logger.Warnf("deleteTempTx tick [%s] err %s", tickName, err)
+	}
 
 	return mintAmtResult, nil
 
@@ -258,10 +262,6 @@ func (p *Protocol) getTickAllAddrMintTimes(tick string) *sync.Map {
 		p.allAddressMintTimesMap.Store(tick, tickAddrMintTimesMapObj)
 	}
 	tickAddrMintTimesMap := tickAddrMintTimesMapObj.(*sync.Map)
-	tickAddrMintTimesMap.Range(func(key, value any) bool {
-		fmt.Println(key, "--", value)
-		return true
-	})
 	return tickAddrMintTimesMap
 }
 func (p *Protocol) getMintTimes(tick, minter string) uint64 {

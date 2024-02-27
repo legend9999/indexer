@@ -1,6 +1,7 @@
 package opbrc
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -179,6 +180,52 @@ func (p *Protocol) notSettledTick() []*model.OpbrcInscriptionExt {
 	return insExt
 }
 
-func (p *Protocol) insertListTx() {
+func (p *Protocol) insertTempTx(temp *tempSettleMint) (int64, error) {
+	transactions := temp.Block.Transactions
+	temp.Block.Transactions = []*xycommon.RpcTransaction{}
+	blockContent, _ := json.Marshal(temp.Block)
+	mdContent, _ := json.Marshal(temp.Md)
+	txContent, _ := json.Marshal(temp.Tx)
+	opContent, _ := json.Marshal(temp.Mint)
+	m := &model.OpbrcTempTxs{
+		Chain:        chainName,
+		Protocol:     protocolName,
+		BlockHeight:  temp.Block.Number.Uint64(),
+		TxHash:       temp.Tx.Hash,
+		Op:           temp.Md.Operate,
+		Tick:         temp.Md.Tick,
+		BlockContent: string(blockContent),
+		TxContent:    string(txContent),
+		OpContent:    string(opContent),
+		MdContent:    string(mdContent),
+	}
 
+	temp.Block.Transactions = transactions
+
+	dbClient := p.cache.GetDBClient().SqlDB
+	result := dbClient.Save(&m)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return result.RowsAffected, nil
+}
+
+func (p *Protocol) loadTempTx(tick string, start, end uint64) ([]*model.OpbrcTempTxs, error) {
+	dbClient := p.cache.GetDBClient().SqlDB
+
+	var insExt []*model.OpbrcTempTxs
+	err := dbClient.Where("block_height >= ? and block_height <= ? and tick = ?", start, end, tick).Find(&insExt).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) || err != nil {
+		return nil, err
+	}
+	return insExt, nil
+}
+
+func (p *Protocol) deleteTempTx(tick string, start, end uint64) (int64, error) {
+	dbClient := p.cache.GetDBClient().SqlDB
+	result := dbClient.Where("block_height >= ? and block_height <= ? and tick = ?", start, end, tick).Delete(&model.OpbrcTempTxs{})
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return result.RowsAffected, nil
 }

@@ -94,13 +94,19 @@ func (p *Protocol) checkMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 		p.allAddressCurrentSmMintTxMap.Store(mint.Tick, tickMintTxsObj)
 	}
 	tickMintTxs := tickMintTxsObj.([]*tempSettleMint)
-	tickMintTxs = append(tickMintTxs, &tempSettleMint{
-		block: block,
-		tx:    tx,
-		mint:  mint,
-		md:    md,
-	})
+	temp := &tempSettleMint{
+		Block: block,
+		Tx:    tx,
+		Mint:  mint,
+		Md:    md,
+	}
+	tickMintTxs = append(tickMintTxs, temp)
+
 	p.allAddressCurrentSmMintTxMap.Store(mint.Tick, tickMintTxs)
 
+	_, err = p.insertTempTx(temp)
+	if err != nil {
+		xylog.Logger.Warnf("mint insert err:%v, data[%s]", err, md.Data)
+	}
 	return mint, nil
 }
