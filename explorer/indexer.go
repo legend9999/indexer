@@ -284,16 +284,16 @@ func (e *Explorer) handleBlock(block *xycommon.RpcBlock) {
 		txs = e.tryFilterTxs(txs)
 
 		// Add receipt data & filter invalid status
-		txs, err := e.validReceiptTxs(txs)
-		if err != nil {
-			xylog.Logger.Errorf("fetch receipt data internal err:%v & retry later[%d]", err, retry)
-			retry++
-			<-time.After(time.Millisecond * 100)
-			continue
-		}
+		//txs, err := e.validReceiptTxs(txs)
+		//if err != nil {
+		//	xylog.Logger.Errorf("fetch receipt data internal err:%v & retry later[%d]", err, retry)
+		//	retry++
+		//	<-time.After(time.Millisecond * 100)
+		//	continue
+		//}
 
 		// Handle: parse txs & sync cache / db
-		err = e.handleTxs(block, txs)
+		err := e.handleTxs(block, txs)
 		if err != nil {
 			xylog.Logger.Errorf("parse internal err:%v & retry later[%d]", err, retry)
 			retry++
