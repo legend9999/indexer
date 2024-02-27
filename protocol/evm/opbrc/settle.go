@@ -78,7 +78,7 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 
 	// 判断是否到结算的时间点
 	if settledBlockNumber >= endBlockNumber {
-		xylog.Logger.Warnf("settle tick %s endBlockNumber = %d parsedMaxBlockNumber = %d", tickName, endBlockNumber, block.Number.Uint64())
+		xylog.Logger.Debugf("settle tick %s endBlockNumber = %d parsedMaxBlockNumber = %d", tickName, endBlockNumber, block.Number.Uint64())
 		return nil, xyerrors.NewInsError(-102, fmt.Sprintf("tick %s endBlockNumber = %d parsedMaxBlockNumber = %d", tickName, endBlockNumber, block.Number.Uint64()))
 	}
 	toBlockNumber := settledBlockNumber + sm*60

@@ -114,6 +114,9 @@ func NewProtocol(cache *dcache.Manager) *Protocol {
 }
 
 func (p *Protocol) Parse(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, md *devents.MetaData) ([]*devents.TxResult, *xyerrors.InsError) {
+	if md.Protocol != protocolName {
+		return nil, nil
+	}
 	switch md.Operate {
 	case OperateRegister:
 		return p.ProcessRegister(block, tx, md)
