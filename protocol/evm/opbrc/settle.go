@@ -100,12 +100,14 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 
 	//第一次mint，需要插入
 	newAddrMint := make(map[string]struct{})
+	currentSettleAddr := make(map[string]struct{})
 
 	validTickMintTx := make([]*tempSettleMint, 0)
 	//本次结算有效果mint总次数
 	validTimes := 0
 	for _, tickMintTx := range tickMintTxs {
 		minter := strings.ToLower(tickMintTx.Tx.From)
+		currentSettleAddr[minter] = struct{}{}
 		mintedTimes := p.getMintTimes(tickName, minter)
 		if mintedTimes == 0 {
 			newAddrMint[minter] = struct{}{}
@@ -217,11 +219,14 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 		needInsertAddrMintTimes := make(map[string]uint64)
 		needUpdateAddrMintTimes := make(map[string]uint64)
 		p.getTickAllAddrMintTimes(tickName).Range(func(key, value any) bool {
-			_, ok := newAddrMint[key.(string)]
-			if ok {
-				needInsertAddrMintTimes[key.(string)] = value.(uint64)
-			} else {
-				needUpdateAddrMintTimes[key.(string)] = value.(uint64)
+			_, found := currentSettleAddr[key.(string)]
+			if found {
+				_, ok := newAddrMint[key.(string)]
+				if ok {
+					needInsertAddrMintTimes[key.(string)] = value.(uint64)
+				} else {
+					needUpdateAddrMintTimes[key.(string)] = value.(uint64)
+				}
 			}
 			return true
 		})
@@ -250,6 +255,7 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 		xylog.Logger.Warnf("deleteTempTx tick [%s] err %s", tickName, err)
 	}
 
+	xylog.Logger.Infof("process settle %s result count %d", tickName, len(mintAmtResult))
 	return mintAmtResult, nil
 
 }

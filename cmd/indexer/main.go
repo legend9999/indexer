@@ -31,6 +31,7 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -103,9 +104,11 @@ func main() {
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	protocol.EvmOpbrcProtocol.ExitProcess()
+
 	// notify service stopped
 	exp.Stop()
+	time.Sleep(20 * time.Second)
+	protocol.EvmOpbrcProtocol.ExitProcess()
 	xylog.Logger.Infof("service stopped")
 }
 

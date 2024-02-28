@@ -94,6 +94,7 @@ func (p *Protocol) updateMintTimes(tick string, mintTimes map[string]uint64) (in
 	if len(mintTimes) == 0 {
 		return 0, nil
 	}
+	start := time.Now()
 	dbClient := p.cache.GetDBClient().SqlDB
 	sqlPrefix := `UPDATE opbrc_address_mint_times
 					SET mint_times =
@@ -113,7 +114,7 @@ func (p *Protocol) updateMintTimes(tick string, mintTimes map[string]uint64) (in
 		xylog.Logger.Warnf("update mint times err %s", result.Error)
 		return 0, result.Error
 	}
-	xylog.Logger.Debugf("update mint times affected %d", result.RowsAffected)
+	xylog.Logger.Infof("updateMintTimes %s mint times affected %d use time %v", tick, result.RowsAffected, time.Since(start))
 	return result.RowsAffected, nil
 }
 
@@ -121,6 +122,7 @@ func (p *Protocol) insertMintTimes(tick string, mintTimes map[string]uint64) (in
 	if len(mintTimes) == 0 {
 		return 0, nil
 	}
+	start := time.Now()
 	dbClient := p.cache.GetDBClient().SqlDB
 	addressMintTimes := make([]*model.OpbrcAddressMintTimes, 0)
 	for address, times := range mintTimes {
@@ -139,6 +141,7 @@ func (p *Protocol) insertMintTimes(tick string, mintTimes map[string]uint64) (in
 	if result.Error != nil {
 		return 0, result.Error
 	}
+	xylog.Logger.Infof("insertMintTimes %s count %d use time %+v", tick, len(mintTimes), time.Since(start))
 	return result.RowsAffected, nil
 }
 
