@@ -160,7 +160,7 @@ func (p *Protocol) insertMintTimes(tick string, mintTimes map[string]uint64) (in
 			UpdatedAt:          time.Now(),
 		})
 	}
-	result := dbClient.Table(model.OpbrcAddressMintTimes{}.TableName()).Save(addressMintTimes)
+	result := dbClient.Table(model.OpbrcAddressMintTimes{}.TableName()).CreateInBatches(addressMintTimes, 2000)
 	if result.Error != nil {
 		return 0, result.Error
 	}

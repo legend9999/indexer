@@ -1,6 +1,7 @@
 package opbrc
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 )
@@ -50,6 +51,10 @@ func TestProtocol_updateMintTimes2(t *testing.T) {
 	mintTimes := map[string]uint64{
 		"aaa111": 1,
 		"bbb111": 2,
+	}
+
+	for i := 0; i < 20000; i++ {
+		mintTimes[fmt.Sprintf("%d", i)] = 1
 	}
 	updateMintTimes2, err := protocol.updateMintTimes2("uxuy1", mintTimes)
 	if err != nil {
