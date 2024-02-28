@@ -211,6 +211,10 @@ func (p *Protocol) initTempTx() {
 			xylog.Logger.Warnf("load [%s] temp tx err %s", ext.Tick, err)
 			continue
 		}
+		_, err = p.deleteTempTx(tick, ext.SettledBlockNumber+1, toBlockNumber)
+		if err != nil {
+			xylog.Logger.Warnf("delete [%s] temp tx err %s", ext.Tick, err)
+		}
 		for _, tempTx := range opbrcTempTxs {
 			//把mint事件暂存
 			tickMintTxsObj, ok := p.allAddressCurrentSmMintTxMap.Load(tick)
@@ -256,5 +260,6 @@ func (p *Protocol) initTempTx() {
 			p.allAddressCurrentSmMintTxMap.Store(mint.Tick, tickMintTxs)
 		}
 	}
+
 	xylog.Logger.Infof("init temp tx use time %v", time.Since(start))
 }
