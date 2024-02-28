@@ -104,9 +104,9 @@ func (p *Protocol) checkMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 
 	p.allAddressCurrentSmMintTxMap.Store(mint.Tick, tickMintTxs)
 
-	_, err = p.insertTempTx(temp)
-	if err != nil {
-		xylog.Logger.Warnf("mint insert err:%v, data[%s]", err, md.Data)
-	}
+	//_, err = p.insertTempTx(temp)
+	//if err != nil {
+	//	xylog.Logger.Warnf("mint insert err:%v, data[%s]", err, md.Data)
+	//}
 	return mint, nil
 }

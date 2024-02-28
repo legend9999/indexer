@@ -165,6 +165,36 @@ func (p *Protocol) GetInscriptionExt(tickName string) *model.OpbrcInscriptionExt
 	return insExtObj.(*model.OpbrcInscriptionExt)
 }
 
+func (p *Protocol) ExitProcess() {
+	//go func() {
+	//	xylog.Logger.Infof("opbrc exitProcess start")
+	//	select {
+	//	case <-p.cache.QuitChan:
+	xylog.Logger.Infof("start process opbrc exit process")
+	exts, err := p.queryInscriptionExts()
+	if err != nil {
+		return
+	}
+	for _, ext := range exts {
+		//把mint事件暂存
+		tickMintTxsObj, ok := p.allAddressCurrentSmMintTxMap.Load(strings.ToLower(ext.Tick))
+		if !ok {
+			tickMintTxsObj = make([]*tempSettleMint, 0)
+			p.allAddressCurrentSmMintTxMap.Store(strings.ToLower(ext.Tick), tickMintTxsObj)
+		}
+		tickMintTxs := tickMintTxsObj.([]*tempSettleMint)
+		for _, tx := range tickMintTxs {
+			_, err = p.insertTempTx(tx)
+			if err != nil {
+				xylog.Logger.Warnf("mint insert err:%v, data[%s]", err, tx.Md.Data)
+			}
+		}
+		xylog.Logger.Infof("opbrc exitProcess save tick %s mint txs %d", ext.Tick, len(tickMintTxs))
+	}
+
+	//	}
+	//}()
+}
 func isValidEthAddress(address string) bool {
 	ethAddressRegex := regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 	return ethAddressRegex.MatchString(address)

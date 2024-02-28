@@ -103,7 +103,7 @@ func main() {
 
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-
+	protocol.EvmOpbrcProtocol.ExitProcess()
 	// notify service stopped
 	exp.Stop()
 	xylog.Logger.Infof("service stopped")
