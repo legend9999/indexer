@@ -58,8 +58,8 @@ type OpbrcAddressMintTimes struct {
 	ID                 uint64    `gorm:"primaryKey" json:"id"`
 	Chain              string    `json:"chain" gorm:"column:chain"`
 	Protocol           string    `json:"protocol" gorm:"column:protocol"`
-	Address            string    `json:"address" gorm:"column:address"`
-	Tick               string    `json:"tick" gorm:"column:tick"`
+	Address            string    `json:"address" gorm:"column:address;type:varchar(128)"`
+	Tick               string    `json:"tick" gorm:"column:tick;type:varchar(512)"`
 	MintTimes          uint64    `json:"mint_times" gorm:"column:mint_times"`
 	CurrentSMMintTimes uint64    `json:"current_sm_mint_times" gorm:"column:current_sm_mint_times"`
 	CreatedAt          time.Time `json:"created_at" gorm:"column:created_at"`
