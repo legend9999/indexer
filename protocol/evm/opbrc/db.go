@@ -105,6 +105,7 @@ func (p *Protocol) updateMintTimes2(tick string, mintTimes map[string]uint64) (i
 		xylog.Logger.Warnf("delete mint times err %s", tx.Error)
 		return 0, tx.Error
 	}
+	xylog.Logger.Infof("updateMintTimes2 delete %s count %d use time %+v", tick, len(mintTimes), time.Since(start))
 	insertMintTimes, err := p.insertMintTimes(tick, mintTimes)
 	if err != nil {
 		return 0, err
