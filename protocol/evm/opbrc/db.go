@@ -90,6 +90,29 @@ func (p *Protocol) queryInscription(tick string) (*model.Inscriptions, error) {
 	return inscriptions, nil
 }
 
+func (p *Protocol) updateMintTimes2(tick string, mintTimes map[string]uint64) (int64, error) {
+	if len(mintTimes) == 0 {
+		return 0, nil
+	}
+	addresses := make([]string, 0)
+	for k, _ := range mintTimes {
+		addresses = append(addresses, k)
+	}
+	start := time.Now()
+	dbClient := p.cache.GetDBClient().SqlDB
+	tx := dbClient.Where("tick = ? and address in (?)", tick, addresses).Delete(model.OpbrcAddressMintTimes{})
+	if tx.Error != nil {
+		xylog.Logger.Warnf("delete mint times err %s", tx.Error)
+		return 0, tx.Error
+	}
+	insertMintTimes, err := p.insertMintTimes(tick, mintTimes)
+	if err != nil {
+		return 0, err
+	}
+	xylog.Logger.Infof("updateMintTimes2 %s count %d use time %+v", tick, len(mintTimes), time.Since(start))
+	return insertMintTimes, nil
+}
+
 func (p *Protocol) updateMintTimes(tick string, mintTimes map[string]uint64) (int64, error) {
 	if len(mintTimes) == 0 {
 		return 0, nil

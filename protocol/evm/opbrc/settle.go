@@ -234,7 +234,7 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 		if err != nil {
 			xylog.Logger.Warnf("insertMintTimes err %s", err)
 		}
-		_, err = p.updateMintTimes(tickName, needUpdateAddrMintTimes)
+		_, err = p.updateMintTimes2(tickName, needUpdateAddrMintTimes)
 		if err != nil {
 			xylog.Logger.Warnf("updateMintTimes err %s", err)
 		}

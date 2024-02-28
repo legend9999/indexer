@@ -45,3 +45,16 @@ func TestProtocol_addMintTimes(t *testing.T) {
 	}
 	protocol.insertMintTimes("legend1", mintTimes)
 }
+func TestProtocol_updateMintTimes2(t *testing.T) {
+	protocol := intEnv()
+	mintTimes := map[string]uint64{
+		"aaa111": 1,
+		"bbb111": 2,
+	}
+	updateMintTimes2, err := protocol.updateMintTimes2("uxuy1", mintTimes)
+	if err != nil {
+		t.Fatalf("%s", err)
+		return
+	}
+	t.Log(updateMintTimes2)
+}
