@@ -94,17 +94,31 @@ func (p *Protocol) updateMintTimes2(tick string, mintTimes map[string]uint64) (i
 	if len(mintTimes) == 0 {
 		return 0, nil
 	}
-	addresses := make([]string, 0)
+	addrs := make([]string, 0)
 	for k, _ := range mintTimes {
-		addresses = append(addresses, k)
+		addrs = append(addrs, k)
 	}
+
+	var chunks [][]string
+	for i := 0; i < len(addrs); i += 2000 {
+		end := i + 2000
+		if end > len(addrs) {
+			end = len(addrs)
+		}
+		chunks = append(chunks, addrs[i:end])
+	}
+
 	start := time.Now()
 	dbClient := p.cache.GetDBClient().SqlDB
-	tx := dbClient.Where("tick = ? and address in (?)", tick, addresses).Delete(model.OpbrcAddressMintTimes{})
-	if tx.Error != nil {
-		xylog.Logger.Warnf("delete mint times err %s", tx.Error)
-		return 0, tx.Error
+	for _, v := range chunks {
+		tx := dbClient.Where("tick = ? and address in (?)", tick, v).Delete(model.OpbrcAddressMintTimes{})
+		if tx.Error != nil {
+			xylog.Logger.Warnf("delete mint times err %s", tx.Error)
+			//return 0, tx.Error
+			continue
+		}
 	}
+
 	xylog.Logger.Infof("updateMintTimes2 delete %s count %d use time %+v", tick, len(mintTimes), time.Since(start))
 	insertMintTimes, err := p.insertMintTimes(tick, mintTimes)
 	if err != nil {
