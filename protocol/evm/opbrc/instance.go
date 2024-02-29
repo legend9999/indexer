@@ -117,6 +117,10 @@ func (p *Protocol) Parse(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, 
 	if md.Protocol != protocolName {
 		return nil, nil
 	}
+	md.Operate = strings.ToLower(md.Operate)
+	md.Tick = strings.ToLower(md.Tick)
+	md.Protocol = strings.ToLower(md.Protocol)
+
 	switch md.Operate {
 	case OperateRegister:
 		return p.ProcessRegister(block, tx, md)

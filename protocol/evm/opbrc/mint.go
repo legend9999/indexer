@@ -64,6 +64,9 @@ func (p *Protocol) checkMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 	}
 
 	mint := &Mint{}
+
+	mint.Tick = strings.ToLower(mint.Tick)
+
 	err := json.Unmarshal([]byte(md.Data), mint)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-13, fmt.Sprintf("data json deocde err:%v, data[%s]", err, md.Data))
