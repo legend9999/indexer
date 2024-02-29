@@ -106,6 +106,9 @@ func (p *Protocol) settle(block *xycommon.RpcBlock, insExt *model.OpbrcInscripti
 	//本次结算有效果mint总次数
 	validTimes := 0
 	for _, tickMintTx := range tickMintTxs {
+		if tickMintTx.Block.Number.Uint64() <= settledBlockNumber || tickMintTx.Block.Number.Uint64() > toBlockNumber {
+			continue
+		}
 		minter := strings.ToLower(tickMintTx.Tx.From)
 		currentSettleAddr[minter] = struct{}{}
 		mintedTimes := p.getMintTimes(tickName, minter)
