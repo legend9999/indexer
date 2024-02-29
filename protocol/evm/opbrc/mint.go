@@ -40,6 +40,9 @@ type Mint struct {
 }
 
 func (p *Protocol) ProcessMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, md *devents.MetaData) ([]*devents.TxResult, *xyerrors.InsError) {
+	if md.Tick == "opbn" {
+		return nil, nil
+	}
 	_, err := p.checkMint(block, tx, md)
 	if err != nil {
 		xylog.Logger.Infof("mint check err:%v, data[%s]", err, md.Data)
