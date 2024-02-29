@@ -60,7 +60,7 @@ func (p *Protocol) checkRegister(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 	if err := json.Unmarshal([]byte(md.Data), &register); err != nil {
 		return nil, xyerrors.NewInsError(-201, fmt.Sprintf("protocol[%s] / data [%s] unmarshal err %+v", md.Protocol, md.Data, err))
 	}
-
+	originTick := register.Tick
 	register.Tick = strings.TrimSpace(register.Tick)
 	if len(register.Tick) == 0 {
 		return nil, xyerrors.NewInsError(-202, fmt.Sprintf("protocol[%s] / register tick[%s] nil", md.Protocol, md.Tick))
@@ -94,7 +94,7 @@ func (p *Protocol) checkRegister(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 		Tick:                strings.ToLower(register.Tick),
 		RegistryAddress:     strings.ToLower(tx.From),
 		RegistryBlockNumber: tx.BlockNumber.Uint64(),
-		OriginTick:          register.Tick,
+		OriginTick:          originTick,
 		CreatedAt:           time.Now(),
 		UpdatedAt:           time.Now(),
 	}
