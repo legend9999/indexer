@@ -42,7 +42,7 @@ type Mint struct {
 func (p *Protocol) ProcessMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransaction, md *devents.MetaData) ([]*devents.TxResult, *xyerrors.InsError) {
 	_, err := p.checkMint(block, tx, md)
 	if err != nil {
-		xylog.Logger.Warnf("mint check err:%v, data[%s]", err, md.Data)
+		xylog.Logger.Infof("mint check err:%v, data[%s]", err, md.Data)
 		//这里不能返回错误，否则同一区块的tx，如果一个错误，那么会导致整个区块都失败
 		return nil, nil
 	}
