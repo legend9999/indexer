@@ -53,8 +53,8 @@ func (p *Protocol) checkRegister(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("tx.to[%s] != treasury_address[%s]", tx.To, p.cache.GlobalCfg.Chain.TreasuryAddress))
 	}
 	// metadata protocol / tick checking
-	if md.Protocol == "" || md.Tick == "" {
-		return nil, xyerrors.NewInsError(-200, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
+	if md.Tick == "" || md.Protocol != protocolName {
+		return nil, xyerrors.NewInsError(-210, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
 	}
 	var register Register
 	if err := json.Unmarshal([]byte(md.Data), &register); err != nil {

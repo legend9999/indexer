@@ -55,6 +55,11 @@ func (p *Protocol) checkMint(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 	}
 	//blockNumber := tx.BlockNumber.Int64()
 
+	// metadata protocol / tick checking
+	if md.Tick == "" || md.Protocol != protocolName {
+		return nil, xyerrors.NewInsError(-210, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
+	}
+
 	mint := &Mint{}
 	err := json.Unmarshal([]byte(md.Data), mint)
 	if err != nil {

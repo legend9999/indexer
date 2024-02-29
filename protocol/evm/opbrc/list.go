@@ -61,8 +61,8 @@ func (p *Protocol) checkList(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("tx.to[%s] != treasury_address[%s]", tx.To, p.cache.GlobalCfg.Chain.TreasuryAddress))
 	}
 	// metadata protocol / tick checking
-	if md.Protocol == "" || md.Tick == "" {
-		return nil, xyerrors.NewInsError(-12, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
+	if md.Tick == "" || md.Protocol != protocolName {
+		return nil, xyerrors.NewInsError(-210, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
 	}
 
 	// exists checking

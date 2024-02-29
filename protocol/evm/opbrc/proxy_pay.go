@@ -72,8 +72,8 @@ func (p *Protocol) checkProxyPay(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 		return nil, xyerrors.NewInsError(-11, fmt.Sprintf("tx.From[%s] != mpAddress[%s]", tx.From, p.cache.GlobalCfg.Chain.MarketPlaceAddress))
 	}
 	// metadata protocol / tick checking
-	if md.Protocol == "" || md.Tick == "" {
-		return nil, xyerrors.NewInsError(-12, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
+	if md.Tick == "" || md.Protocol != protocolName {
+		return nil, xyerrors.NewInsError(-210, fmt.Sprintf("protocol[%s] / tick[%s] nil", md.Protocol, md.Tick))
 	}
 
 	// exists checking
