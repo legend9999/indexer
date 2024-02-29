@@ -189,7 +189,7 @@ func (e *Explorer) handleTxs(block *xycommon.RpcBlock, txs []*xycommon.RpcTransa
 		xylog.Logger.Infof("tx data parsed success. md[%v], tx[%s]", md, tx.Hash)
 
 		if len(txResults) < 1 {
-			xylog.Logger.Warnf("tx data parsed result nil. md[%v], tx[%s]", md, tx.Hash)
+			xylog.Logger.Infof("tx data parsed result nil. md[%v], tx[%s]", md, tx.Hash)
 			continue
 		}
 
