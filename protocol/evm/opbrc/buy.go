@@ -72,7 +72,7 @@ func (p *Protocol) checkBuy(block *xycommon.RpcBlock, tx *xycommon.RpcTransactio
 	}
 
 	buy := &Buy{}
-	err := json.Unmarshal([]byte(md.Data), buy)
+	err := json.Unmarshal([]byte(strings.ToLower(md.Data)), buy)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-13, fmt.Sprintf("json decode err:%v", err))
 	}

@@ -82,7 +82,7 @@ func (p *Protocol) checkProxyPay(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 	}
 
 	proxyPay := &ProxyPay{}
-	err := json.Unmarshal([]byte(md.Data), proxyPay)
+	err := json.Unmarshal([]byte(strings.ToLower(md.Data)), proxyPay)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-13, fmt.Sprintf("json decode err:%v", err))
 	}

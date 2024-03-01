@@ -82,7 +82,7 @@ func (p *Protocol) checkTransfer(tx *xycommon.RpcTransaction, md *devents.MetaDa
 	}
 
 	tf := &Transfer{}
-	err := json.Unmarshal([]byte(md.Data), tf)
+	err := json.Unmarshal([]byte(strings.ToLower(md.Data)), tf)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-13, fmt.Sprintf("data json deocde err:%v, data[%s]", err, md.Data))
 	}

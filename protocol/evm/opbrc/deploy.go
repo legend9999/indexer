@@ -78,7 +78,7 @@ func (p *Protocol) checkDeploy(block *xycommon.RpcBlock, tx *xycommon.RpcTransac
 	}
 
 	deploy := &Deploy{}
-	err := json.Unmarshal([]byte(md.Data), deploy)
+	err := json.Unmarshal([]byte(strings.ToLower(md.Data)), deploy)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-211, fmt.Sprintf("json decode err:%v", err))
 	}

@@ -80,7 +80,7 @@ func (p *Protocol) checkList(block *xycommon.RpcBlock, tx *xycommon.RpcTransacti
 	}
 
 	list := &List{}
-	err := json.Unmarshal([]byte(md.Data), list)
+	err := json.Unmarshal([]byte(strings.ToLower(md.Data)), list)
 	if err != nil {
 		return nil, xyerrors.NewInsError(-13, fmt.Sprintf("json decode err:%v", err))
 	}
