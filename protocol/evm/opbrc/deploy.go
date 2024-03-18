@@ -103,14 +103,14 @@ func (p *Protocol) checkDeploy(block *xycommon.RpcBlock, tx *xycommon.RpcTransac
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("inscription deployed & abort, protocol[%s], tick[%s] max[%d]", md.Protocol, md.Tick, deploy.Max))
 	}
 
-	if deploy.Mspan.IntPart() > math.MaxInt || deploy.Mspan.IntPart() <= 0 {
+	if deploy.Mspan.IntPart() > math.MaxInt32 || deploy.Mspan.IntPart() <= 0 {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("inscription deployed & abort, protocol[%s], tick[%s] mspan[%d]", md.Protocol, md.Tick, deploy.Mspan))
 	}
-	if deploy.Mcount.IntPart() > math.MaxInt || deploy.Mcount.IntPart() <= 0 {
+	if deploy.Mcount.IntPart() > math.MaxInt32 || deploy.Mcount.IntPart() <= 0 {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("inscription deployed & abort, protocol[%s], tick[%s] mcount[%d]", md.Protocol, md.Tick, deploy.Mcount))
 	}
 
-	if deploy.Sm.IntPart() > math.MaxInt || deploy.Sm.IntPart() <= 0 {
+	if deploy.Sm.IntPart() > math.MaxInt32 || deploy.Sm.IntPart() <= 0 {
 		return nil, xyerrors.NewInsError(-14, fmt.Sprintf("inscription deployed & abort, protocol[%s], tick[%s] sm[%d]", md.Protocol, md.Tick, deploy.Sm))
 	}
 

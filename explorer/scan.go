@@ -26,21 +26,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/uxuycom/indexer/client/xycommon"
-	"github.com/uxuycom/indexer/config"
-	"github.com/uxuycom/indexer/dcache"
-	"github.com/uxuycom/indexer/devents"
-	"github.com/uxuycom/indexer/storage"
-	"github.com/uxuycom/indexer/xylog"
-	"golang.org/x/sync/errgroup"
 	"math/big"
 	"os"
 	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
+
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
+	"golang.org/x/sync/errgroup"
+
+	"github.com/uxuycom/indexer/client/xycommon"
+	"github.com/uxuycom/indexer/config"
+	"github.com/uxuycom/indexer/dcache"
+	"github.com/uxuycom/indexer/devents"
+	"github.com/uxuycom/indexer/storage"
+	"github.com/uxuycom/indexer/xylog"
 )
 
 type Explorer struct {
@@ -241,7 +243,9 @@ func (e *Explorer) batchScan(startBlock, endBlock uint64) error {
 	defer cancel()
 
 	blockLogsChan := make(chan map[string][]xycommon.RpcLog)
-	go e.scanLogs(startBlock, endBlock, blockLogsChan)
+	if e.config.GetConfig().Chain.ChainName != "opbnb" {
+		go e.scanLogs(startBlock, endBlock, blockLogsChan)
+	}
 
 	blockMap := &sync.Map{}
 	g, ctx := errgroup.WithContext(ctx)
