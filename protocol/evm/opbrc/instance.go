@@ -109,7 +109,7 @@ func NewProtocol(cache *dcache.Manager) *Protocol {
 	}
 
 	result.initTempTx()
-
+	xylog.Logger.Warnf("opbrc protocol init success")
 	return result
 }
 
