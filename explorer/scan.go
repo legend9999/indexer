@@ -243,7 +243,8 @@ func (e *Explorer) batchScan(startBlock, endBlock uint64) error {
 	defer cancel()
 
 	blockLogsChan := make(chan map[string][]xycommon.RpcLog)
-	if e.config.GetConfig().Chain.ChainName != "opbnb" {
+	isOpbnb := e.config.GetConfig().Chain.ChainName == "opbnb"
+	if !isOpbnb {
 		go e.scanLogs(startBlock, endBlock, blockLogsChan)
 	}
 
@@ -265,8 +266,13 @@ func (e *Explorer) batchScan(startBlock, endBlock uint64) error {
 		return fmt.Errorf("concurrent block scanning failed. err=%s", err)
 	}
 
+	var blockLogs map[string][]xycommon.RpcLog
 	// wait rpc logs result
-	blockLogs := <-blockLogsChan
+	if !isOpbnb {
+		blockLogs = <-blockLogsChan
+	} else {
+		blockLogs = make(map[string][]xycommon.RpcLog, 16)
+	}
 
 	for blockNum := startBlock; blockNum <= endBlock; blockNum++ {
 		blockVal, ok := blockMap.Load(blockNum)
