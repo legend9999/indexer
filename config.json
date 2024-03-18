@@ -12,16 +12,16 @@
   },
   "chain": {
     "chain_name": "opbnb",
-    "rpc": "https://opbnb-mainnet.nodereal.io/v1/db255fc4e4f54b05a5e6fad4403bb835",
+    "rpc": "https://opbnb-testnet.nodereal.io/v1/db255fc4e4f54b05a5e6fad4403bb835",
     "username": "",
     "password": "",
     "treasury_address": "0x83b978cf73ee1d571b1a2550c5570861285af337",
     "market_place_address": "0x59C0f1B3D420BA4f3Ffc53C84722D6F9f50272C6",
     "register_fee":{
-        "2":"5",
-        "3":"3",
-        "4":"1",
-        "5":"0.5"
+        "2":"0.02",
+        "3":"0.01",
+        "4":"0.0001",
+        "5":"0.00001"
     }
   },
   "log_level": "info",
