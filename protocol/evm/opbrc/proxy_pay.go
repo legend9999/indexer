@@ -152,6 +152,15 @@ func (p *Protocol) checkProxyPay(block *xycommon.RpcBlock, tx *xycommon.RpcTrans
 	if processStatus == 0 {
 		return nil, xyerrors.NewInsError(-22, fmt.Sprintf("listTx [%s] / buyTx [%s] not found", proxyPay.ListTx, proxyPay.BuyTx))
 	}
+	// sender balance checking
+	ok, balance := p.cache.Balance.Get(md.Protocol, md.Tick, listTx.ListAddress)
+	if !ok {
+		return nil, xyerrors.NewInsError(-16, fmt.Sprintf("sender balance record not exist, tick[%s-%s], address[%s]", md.Protocol, md.Tick, tx.From))
+	}
+
+	if balance.Overall.LessThan(proxyPay.Amt) {
+		return nil, xyerrors.NewInsError(-17, fmt.Sprintf("sender balance not enough, tick[%s-%s], address[%s], balance[%v], amt[%v]", md.Protocol, md.Tick, tx.From, balance.Overall, proxyPay.Amt))
+	}
 	return &devents.Transfer{
 		Sender: listTx.ListAddress,
 		Receives: []*devents.Receive{{

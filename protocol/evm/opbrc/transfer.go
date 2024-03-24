@@ -115,6 +115,11 @@ func (p *Protocol) checkTransfer(tx *xycommon.RpcTransaction, md *devents.MetaDa
 		return nil, xyerrors.NewInsError(-15, fmt.Sprintf("inscription not exist, protocol[%s]-tick[%s]", protocol, tick))
 	}
 
+	inscriptionExt := p.queryInscriptionExt(tick)
+	if inscriptionExt == nil || inscriptionExt.Progress != 1 {
+		return nil, xyerrors.NewInsError(-17, fmt.Sprintf("inscription progress is not 1, tick[%s], progress[%d]", tick, inscriptionExt.Progress))
+	}
+
 	// sender balance checking
 	ok, balance := p.cache.Balance.Get(protocol, tick, tx.From)
 	if !ok {

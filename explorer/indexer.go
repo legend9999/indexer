@@ -164,6 +164,10 @@ func (e *Explorer) handleTxs(block *xycommon.RpcBlock, txs []*xycommon.RpcTransa
 	blockTxResults := make([]*devents.DBModelEvent, 0, len(txs))
 	for _, tx := range txs {
 		pt, md := protocol.GetProtocol(e.config, tx)
+		//在这里如果不过滤，会取默认的parse
+		if strings.ToLower(md.Protocol) != "opbrc" {
+			continue
+		}
 		if pt == nil {
 			continue
 		}
